@@ -50,7 +50,7 @@ public class SecurityConfig {
                     .and()
                     .formLogin()
                     .loginPage("/auth/login").permitAll()
-                    .defaultSuccessUrl("/auth/success")
+                    .defaultSuccessUrl("/auth/success", true)
                     .and()
                     .logout()
                     .logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout", "GET"))
