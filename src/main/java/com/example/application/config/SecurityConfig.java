@@ -53,7 +53,7 @@ public class SecurityConfig {
                     .defaultSuccessUrl("/auth/success")
                     .and()
                     .logout()
-                    .logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout", "POST"))
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout", "GET"))
                     .invalidateHttpSession(true)
                     .clearAuthentication(true)
                     .deleteCookies("JSESSIONID")
