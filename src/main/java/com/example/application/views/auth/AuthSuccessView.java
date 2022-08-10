@@ -52,9 +52,8 @@ public class AuthSuccessView extends VerticalLayout {
 //          .anyMatch(allowedPrivileges::contains);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(authentication.toString());
-
-        System.out.println(authentication.getPrincipal().toString());
+        System.out.println(authentication.getAuthorities().toString());
+        System.out.println(authentication.getDetails().toString());
     }
 
     private void logoutButtonHandler(ClickEvent<Button> buttonClickEvent) {

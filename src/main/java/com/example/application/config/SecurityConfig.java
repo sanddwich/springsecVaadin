@@ -62,7 +62,15 @@ public class SecurityConfig {
         public void configure(WebSecurity web) throws Exception {
             super.configure(web);
             web.ignoring().antMatchers(
-              "/images/*.png"
+                    "/images/**",
+                    "/VAADIN/**",
+                    "/robots.txt",
+                    "/manifest.webmanifest",
+                    "/sw.js",
+                    "/ofline.html",
+                    "/icons/**",
+                    "/frontend/**",
+                    "/styles/**"
             );
 
         }

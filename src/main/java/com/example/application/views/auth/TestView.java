@@ -7,13 +7,11 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 
 @PageTitle("TestView")
 @Route(value = "/auth/test")
 @PermitAll
-//@Guarded({"ADMIN"})
-@RolesAllowed({"ADMIN"})
+@Guarded({"ADMIN"})
 public class TestView extends VerticalLayout {
 
     public TestView() {
