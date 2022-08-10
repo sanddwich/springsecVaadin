@@ -54,28 +54,28 @@ public class SecurityService {
         }
     }
 
-//    public static boolean isAccessGranted(Class<?> securedClass) {
-//        // Allow if no roles are required.
-//        Guarded guarded = AnnotationUtils.findAnnotation(securedClass, Guarded.class);
-//        if (guarded == null) {
-//            return true; // (1)
-//        }
-//
-//        // lookup needed role in user roles
-//        List<String> allowedPrivileges = Arrays.asList(guarded.value());
-//        Authentication userAuthentication = SecurityContextHolder.getContext().getAuthentication();
-//
-//        return userAuthentication.getAuthorities().stream() // (2)
-//          .map(GrantedAuthority::getAuthority)
-//          .anyMatch(allowedPrivileges::contains);
-//    }
-//
-//    public static boolean isUserLoggedIn() {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        return authentication != null
-//          && !(authentication instanceof AnonymousAuthenticationToken) // (3)
-//          && authentication.isAuthenticated();
-//    }
+    public static boolean isAccessGranted(Class<?> securedClass) {
+        // Allow if no roles are required.
+        Guarded guarded = AnnotationUtils.findAnnotation(securedClass, Guarded.class);
+        if (guarded == null) {
+            return true; // (1)
+        }
+
+        // lookup needed role in user roles
+        List<String> allowedPrivileges = Arrays.asList(guarded.value());
+        Authentication userAuthentication = SecurityContextHolder.getContext().getAuthentication();
+
+        return userAuthentication.getAuthorities().stream() // (2)
+          .map(GrantedAuthority::getAuthority)
+          .anyMatch(allowedPrivileges::contains);
+    }
+
+    public static boolean isUserLoggedIn() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null
+          && !(authentication instanceof AnonymousAuthenticationToken) // (3)
+          && authentication.isAuthenticated();
+    }
 
     public void logout() {
         UI.getCurrent().getPage().setLocation(LOGOUT_SUCCESS_URL);
