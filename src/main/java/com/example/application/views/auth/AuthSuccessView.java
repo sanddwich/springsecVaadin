@@ -12,6 +12,7 @@ import javax.annotation.security.PermitAll;
 
 @PageTitle("Успешная авторизация")
 @Route(value = "/auth/success")
+@PermitAll
 public class AuthSuccessView extends VerticalLayout {
     private Button button;
 

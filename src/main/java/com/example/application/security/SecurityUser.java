@@ -63,16 +63,16 @@ public class SecurityUser implements UserDetails {
     }
 
     public static UserDetails fromUser(User user) {
-        Set<SimpleGrantedAuthority> simpleGrantedAuthorities = user.getAccessRoles()
-                .stream()
-                .map(AccessRole::getPrivileges)
-                .flatMap(Collection::stream)
-                .map(privilege -> new SimpleGrantedAuthority(privilege.getCode()))
-                .collect(Collectors.toSet());
-
-        simpleGrantedAuthorities.forEach(simpleGrantedAuthority -> {
-            System.out.println(simpleGrantedAuthority.getAuthority());
-        });
+//        Set<SimpleGrantedAuthority> simpleGrantedAuthorities = user.getAccessRoles()
+//                .stream()
+//                .map(AccessRole::getPrivileges)
+//                .flatMap(Collection::stream)
+//                .map(privilege -> new SimpleGrantedAuthority(privilege.getCode()))
+//                .collect(Collectors.toSet());
+//
+//        simpleGrantedAuthorities.forEach(simpleGrantedAuthority -> {
+//            System.out.println(simpleGrantedAuthority.getAuthority());
+//        });
 
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),

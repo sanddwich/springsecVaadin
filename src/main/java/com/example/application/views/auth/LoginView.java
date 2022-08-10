@@ -1,7 +1,11 @@
 package com.example.application.views.auth;
 
+import com.example.application.security.SecurityService;
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.login.AbstractLogin;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -9,13 +13,18 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import org.springframework.beans.factory.annotation.Value;
 
 @PageTitle("Страница авторизации")
 @Route(value = "/auth/login")
-public class LoginView extends VerticalLayout implements BeforeEnterObserver {
+public class LoginView extends VerticalLayout implements BeforeEnterObserver,
+  ComponentEventListener<AbstractLogin.LoginEvent> {
     private LoginI18n loginI18n = LoginI18n.createDefault();
     private LoginI18n.Form loginI18nForm = loginI18n.getForm();
     LoginForm loginForm = new LoginForm();
+
+    @Value("${params.SUCCESS_AUTH_URL}")
+    private String SUCCESS_AUTH_URL;
 
     @Override
     public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
@@ -26,6 +35,20 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
                         .getParameters()
                         .containsKey("error")
         ) {
+            loginForm.setError(true);
+        }
+
+        if (SecurityService.isAuthenticated())
+            UI.getCurrent().getPage().setLocation(SUCCESS_AUTH_URL);
+    }
+
+    @Override
+    public void onComponentEvent(AbstractLogin.LoginEvent loginEvent) {
+        boolean authenticated = SecurityService.authenticate(
+          loginEvent.getUsername(), loginEvent.getPassword());
+        if (authenticated) {
+            UI.getCurrent().getPage().setLocation(SUCCESS_AUTH_URL);
+        } else {
             loginForm.setError(true);
         }
     }
