@@ -22,7 +22,7 @@ public class DefaultDataSetter {
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     private User admin = new User(
-            "admin", "bck-dkiselev@yandex.ru", this.bCryptPasswordEncoder.encode("Gjlvfcnthmt1!"),
+            "admin", "bck-dkiselev@yandex.ru", this.bCryptPasswordEncoder.encode("admin"),
             true, Collections.emptyList()
     );
 
