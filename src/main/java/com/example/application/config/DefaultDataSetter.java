@@ -21,15 +21,20 @@ public class DefaultDataSetter {
     private final AccessRoleService accessRoleService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
-    private User admin = new User(
-            "admin", "bck-dkiselev@yandex.ru", this.bCryptPasswordEncoder.encode("admin"),
-            true, Collections.emptyList()
-    );
-
-    private User user = new User(
-            "user", "sanddwich51@gmail.com", this.bCryptPasswordEncoder.encode("user"),
-            true, Collections.emptyList()
-    );
+//    private User admin = new User(
+//            "admin", "bck-dkiselev@yandex.ru", this.bCryptPasswordEncoder.encode("admin"),
+//            true, Collections.emptyList()
+//    );
+//
+//    private User user = new User(
+//            "user", "sanddwich51@gmail.com", this.bCryptPasswordEncoder.encode("user"),
+//            true, Collections.emptyList()
+//    );
+//
+//    private User test = new User(
+//            "test", "sanddwich1201@gmail.com", this.bCryptPasswordEncoder.encode("test"),
+//            true, Collections.emptyList()
+//    );
 
     private List<Privilege> privilegeList = Stream.of(
             new Privilege("ADMIN", "ADMIN", "ADMIN ACCESS"),
@@ -74,6 +79,11 @@ public class DefaultDataSetter {
                 true, Collections.emptyList()
         );
 
+        User test = new User(
+                "test", "sanddwich1201@gmail.com", this.bCryptPasswordEncoder.encode("test"),
+                false, Collections.emptyList()
+        );
+
         AccessRole adminAccessRole =
                 new AccessRole("ADMIN", "ADMIN", "ADMIN ROLE", Stream.of(
                         new Privilege("ADMIN", "ADMIN", "ADMIN ACCESS"),
@@ -107,8 +117,13 @@ public class DefaultDataSetter {
                 userAccessRole, userApiAccessRole
         ).collect(Collectors.toList()));
 
+        test.setAccessRoles(Stream.of(
+                userAccessRole
+        ).collect(Collectors.toList()));
+
         admin = this.createUser(admin);
         user = this.createUser(user);
+        test = this.createUser(test);
     }
 
     public User createUser(User user) {
