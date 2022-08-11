@@ -1,4 +1,4 @@
-package com.example.application.views.auth;
+package com.example.application.views.authaccess.authresult;
 
 import com.example.application.security.SecurityService;
 import com.vaadin.flow.component.ClickEvent;
@@ -7,9 +7,7 @@ import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.annotation.security.PermitAll;
@@ -60,5 +58,7 @@ public class AuthSuccessView extends VerticalLayout {
         SecurityService securityService = new SecurityService();
         securityService.logout();
     }
+
+
 
 }

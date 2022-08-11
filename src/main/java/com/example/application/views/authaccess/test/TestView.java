@@ -1,4 +1,4 @@
-package com.example.application.views.auth;
+package com.example.application.views.authaccess.test;
 
 import com.example.application.security.Guarded;
 import com.vaadin.flow.component.html.H3;
