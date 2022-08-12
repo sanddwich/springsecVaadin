@@ -5,6 +5,7 @@ import com.example.application.entities.User;
 import com.example.application.services.UserService;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
@@ -22,23 +23,33 @@ import java.util.List;
 @PageTitle("Users dictionary")
 @PermitAll
 public class UserListView extends VerticalLayout {
-	HorizontalLayout actionbar = new HorizontalLayout();
-	HorizontalLayout content = new HorizontalLayout();
-	TextField filterTextField = new TextField();
-	Button actionButton = new Button();
-	Grid<User> userGrid = new Grid<>(User.class);
-	UserFormView userFormView = new UserFormView();
+	private HorizontalLayout actionbar = new HorizontalLayout();
+	private HorizontalLayout content = new HorizontalLayout();
+	private TextField filterTextField = new TextField();
+	private Button actionButton = new Button();
+	private Grid<User> userGrid = new Grid<>(User.class);
+	private UserFormView userFormView;
 	private final UserService userService;
+	private final String editClassName = "editing";
 
 	public UserListView(UserService userService) {
 		this.userService = userService;
+		this.userFormView = new UserFormView(userService);
 
 		allConfig();
+		closeUserForm();
 
 		add(
 		  actionbar,
 		  content
 		);
+
+	}
+
+	public void closeUserForm() {
+		userFormView.setVisible(false);
+		userFormView.setUser(null);
+		removeClassName(editClassName);
 	}
 
 	public void updateUserList() {
@@ -104,9 +115,20 @@ public class UserListView extends VerticalLayout {
 		userGrid.addColumn(user -> Status.boolToEnum(user.isActive())).setHeader("Активность");
 		userGrid.getColumns().forEach(userColumn -> userColumn.setAutoWidth(true).setSortable(true));
 
+		userGrid.asSingleSelect().addValueChangeListener(event -> userEdit(event.getValue()));
+
 		updateUserList();
 	}
 
+	private void userEdit(User user) {
+		if (user == null) {
+			closeUserForm();
+		} else {
+			userFormView.setUser(user);
+			userFormView.setVisible(true);
+			addClassName(editClassName);
+		}
+	}
 
 	public void filterTextFieldConfig() {
 		filterTextField.setLabel("Поиск пользователей");
@@ -114,9 +136,16 @@ public class UserListView extends VerticalLayout {
 		filterTextField.setClearButtonVisible(true);
 		filterTextField.setValueChangeMode(ValueChangeMode.LAZY);
 		filterTextField.addValueChangeListener(textFieldStringComponentValueChangeEvent -> updateUserList());
+		filterTextField.addValueChangeListener(event -> {
+			if (filterTextField.getValue().isEmpty())
+				closeUserForm();
+		});
 	}
 
 	private void buttonHandler(ClickEvent<Button> buttonClickEvent) {
-//		updateUserList();
+		User newUser = new User();
+		newUser.setUsername(filterTextField.getValue());
+		newUser.setEmail(filterTextField.getValue());
+		userEdit(newUser);
 	}
 }

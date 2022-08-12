@@ -8,6 +8,6 @@ public enum Status {
     }
 
     public static boolean enumToBool(Status status) {
-        return status.equals(Status.ACTIVE) ? true : false;
+        return status != null && status.equals(Status.ACTIVE) ? true : false;
     }
 }
