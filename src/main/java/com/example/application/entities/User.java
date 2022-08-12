@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.util.List;
 
 @Entity
@@ -31,6 +30,7 @@ public class User extends AbstractEntity {
     private String username;
 
     @NotEmpty
+    @Email
     @Column(unique = true)
     private String email;
 
