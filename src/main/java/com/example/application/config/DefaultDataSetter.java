@@ -19,7 +19,7 @@ public class DefaultDataSetter {
     private final UserService userService;
     private final PrivilegeService privilegeService;
     private final AccessRoleService accessRoleService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
 
 //    private User admin = new User(
 //            "admin", "bck-dkiselev@yandex.ru", this.bCryptPasswordEncoder.encode("admin"),
@@ -81,7 +81,7 @@ public class DefaultDataSetter {
 
         User test = new User(
                 "test", "sanddwich1201@gmail.com", this.bCryptPasswordEncoder.encode("test"),
-                false, Collections.emptyList()
+                true, Collections.emptyList()
         );
 
         AccessRole adminAccessRole =

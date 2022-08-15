@@ -43,12 +43,28 @@ public class UserService implements BaseDataService<User> {
         this.userRepository.delete(user);
     }
 
+    public User update(User user) {
+        this.userRepository.save(user);
+        return this.userRepository.findByUsername(user.getUsername()).stream().findFirst().get();
+    }
+
     public boolean findByUsernameOREmail(User user) {
         if (
                 !this.findByUsername(user.getUsername()).isEmpty() || !this.findByEmail(user.getEmail()).isEmpty()
         ) return true;
 
         return false;
+    }
+
+    public boolean resultUserAlreadyExist(User user) {
+        if (
+                this.userRepository.findByUsernameOrEmail(user.getUsername(), user.getEmail()).isEmpty()
+                || user.getId() == this.userRepository.findByUsernameOrEmail(user.getUsername(), user.getEmail()).stream().findFirst().get().getId()
+        ) {
+            return false;
+        }
+
+        return true;
     }
 
     public List<User> findByUsername(String username) {
