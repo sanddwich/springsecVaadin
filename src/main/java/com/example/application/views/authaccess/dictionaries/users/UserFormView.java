@@ -17,6 +17,7 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.Autocomplete;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
@@ -24,8 +25,10 @@ import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.shared.Registration;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -44,6 +47,8 @@ public class UserFormView extends FormLayout {
 	private Button deleteButton = new Button();
 	private final UserService userService;
 
+	Consumer formButtonClickEvent;
+
 	Binder<User> userBinder = new BeanValidationBinder<>(User.class);
 
 	public UserFormView(UserService userService) {
@@ -60,6 +65,13 @@ public class UserFormView extends FormLayout {
 	public void setUser(User user) {
 		this.user = user;
 		userBinder.readBean(this.user);
+		setUserConfigFields();
+	}
+
+	public void setUserConfigFields() {
+		password.setValue("");
+		password.setInvalid(false);
+		status.setValue(Status.boolToEnum(active.getValue()));
 	}
 
 	//Config
@@ -96,6 +108,7 @@ public class UserFormView extends FormLayout {
 	public void usernameConfig() {
 		username.setLabel("Имя пользователя");
 		username.setWidthFull();
+//		username.setAutocomplete(Autocomplete.OFF);
 	}
 
 	public void emailConfig() {
@@ -166,44 +179,34 @@ public class UserFormView extends FormLayout {
 
 	}
 
-	//Validation
-	private boolean additionalValidate() {
-		return statusValidate();
-	}
-
-	private boolean statusValidate() {
-		if (status.isEmpty()) {
-			status.setInvalid(true);
-			ErrorNotification.showNotification("Статус не заполнен!", true);
-		}
-
-		return !status.isEmpty();
-	}
-
 	//DB operations
-	private void trySave() {
+	private boolean trySave() {
 		try {
 			userBinder.writeBean(this.user);
-			this.user.setPassword(bCryptPasswordEncoder.encode(this.user.getPassword()));
+//			this.user.setPassword(bCryptPasswordEncoder.encode(this.user.getPassword()));
 
-			if (
-			  additionalValidate()
-				&& this.userService.save(this.user) != null
-			) {
-				ErrorNotification.showNotification(
-				  "Пользователь успешно сохранен!\n Добавьте пользователю роли.", false
-				);
-				clearFields();
-				unInvalidateFields();
-			} else {
-				ErrorNotification.showNotification(
-				  "Ошибка сохранения пользователя!\n Email или Логин пользователя не уникальны!", true
-				);
-			}
-		} catch (ValidationException e) {
-			ErrorNotification.showNotification("Ошибка валидации формы!", true);
-			e.getMessage();
+
+//			if (
+//			  additionalValidate()
+//				&& this.userService.save(this.user) != null
+//			) {
+//				ErrorNotification.showNotification(
+//				  "Пользователь успешно сохранен!\n Добавьте пользователю роли.", false
+//				);
+//				clearFields();
+//				unInvalidateFields();
+//				return true;
+//			} else {
+//				ErrorNotification.showNotification(
+//				  "Ошибка сохранения пользователя!\n Email или Логин пользователя не уникальны!", true
+//				);
+//				return false;
+//			}
+		} catch (Exception e) {
+			ErrorNotification.showNotification("Ошибка валидации формы: " + e.getMessage(), true);
 		}
+
+		return false;
 	}
 
 	//Additional methods
@@ -220,5 +223,10 @@ public class UserFormView extends FormLayout {
 		email.setInvalid(false);
 		password.setInvalid(false);
 		status.setInvalid(false);
+	}
+
+	//Consumer
+	public void formButtonClickEvent(Consumer consumer) {
+		this.formButtonClickEvent = consumer;
 	}
 }

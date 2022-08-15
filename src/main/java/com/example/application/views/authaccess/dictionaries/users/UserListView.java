@@ -84,6 +84,7 @@ public class UserListView extends VerticalLayout {
 	}
 
 	private void userFormViewConfig() {
+		userFormView.formButtonClickEvent(event -> formButtonClickEvent());
 		userFormView.setWidth("25em");
 	}
 
@@ -147,5 +148,10 @@ public class UserListView extends VerticalLayout {
 		newUser.setUsername(filterTextField.getValue());
 		newUser.setEmail(filterTextField.getValue());
 		userEdit(newUser);
+	}
+
+	public void formButtonClickEvent() {
+//		filterTextField.setValue("");
+		updateUserList();
 	}
 }
