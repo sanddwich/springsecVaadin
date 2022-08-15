@@ -23,6 +23,8 @@ import com.example.application.views.freeaccess.auth.LoginView;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
+    @Value("${params.BCRYPT_STRENGTH}")
+    private int BCRYPT_STRENGTH;
 
     private final UserDetailsService userDetailsService;
     private final JwtTokenProvider jwtTokenProvider;
@@ -35,6 +37,11 @@ public class SecurityConfig {
     @Bean
     public JwtTokenProvider jwtTokenProviderBean() {
         return this.jwtTokenProvider;
+    }
+
+    @Bean
+    public int getBCRYPT_STRENGTH() {
+        return BCRYPT_STRENGTH;
     }
 
     @Configuration

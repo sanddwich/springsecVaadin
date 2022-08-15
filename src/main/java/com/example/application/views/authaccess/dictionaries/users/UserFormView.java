@@ -12,6 +12,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -26,6 +27,7 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.shared.Registration;
 import org.apache.poi.ss.formula.functions.T;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Collection;
@@ -35,7 +37,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class UserFormView extends FormLayout {
-    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private VerticalLayout fieldsLayout = new VerticalLayout();
     private TextField username = new TextField();
     private EmailField email = new EmailField();
@@ -51,10 +53,12 @@ public class UserFormView extends FormLayout {
 
     Consumer createButtonEvent;
     Consumer updateButtonEvent;
+    Consumer deleteButtonEvent;
 
     Binder<User> userBinder = new BeanValidationBinder<>(User.class);
 
-    public UserFormView(UserService userService) {
+    public UserFormView(UserService userService, int BCRYPT_STRENGTH) {
+        this.bCryptPasswordEncoder = new BCryptPasswordEncoder(BCRYPT_STRENGTH);
         this.userService = userService;
         userBinder.bindInstanceFields(this);
         allConfig();
@@ -114,6 +118,7 @@ public class UserFormView extends FormLayout {
 
     public void emailConfig() {
         email.setLabel("Email");
+
         email.setWidthFull();
     }
 
@@ -161,7 +166,7 @@ public class UserFormView extends FormLayout {
 
     public void updateButtonConfig() {
         updateButton.setText("Обновить");
-        updateButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+//        updateButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         updateButton.addClickListener(this::updateButtonHandler);
     }
 
@@ -171,15 +176,36 @@ public class UserFormView extends FormLayout {
 
     public void deleteButtonConfig() {
         deleteButton.setText("Удалить");
-        deleteButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+        deleteButton.addThemeVariants(ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_PRIMARY);
         deleteButton.addClickListener(this::deleteButtonHandler);
     }
 
     private void deleteButtonHandler(ClickEvent<Button> buttonClickEvent) {
-
+		if (tryDelete())
+			deleteButtonEvent.accept(buttonClickEvent);
     }
 
-    //DB operations
+	private boolean tryDelete() {
+		try {
+			if (!this.userService.delete(this.user)) {
+				throw new Exception(
+				  "Ошибка удаления пользователя!"
+				);
+			} else {
+				ErrorNotification.showNotification(
+				  "Пользователь успешно удален!", false
+				);
+				fieldsToDefault();
+				return true;
+			}
+		} catch (Exception e) {
+			ErrorNotification.showNotification("Ошибка формы: " + e.getMessage(), true);
+		}
+
+		return false;
+	}
+
+	//DB operations
     private boolean trySave() {
         try {
             userBinder.writeBean(this.user);
@@ -221,6 +247,7 @@ public class UserFormView extends FormLayout {
                 ErrorNotification.showNotification(
                         "Пользователь успешно обновлен!", false
                 );
+                fieldsToDefault();
                 return true;
             }
         } catch (Exception e) {
@@ -271,5 +298,9 @@ public class UserFormView extends FormLayout {
 
     public void updateButtonEvent(Consumer callback) {
         this.updateButtonEvent = callback;
+    }
+
+    public void deleteButtonEvent(Consumer callback) {
+        this.deleteButtonEvent = callback;
     }
 }

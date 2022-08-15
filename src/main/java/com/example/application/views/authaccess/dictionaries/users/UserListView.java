@@ -32,9 +32,9 @@ public class UserListView extends VerticalLayout {
 	private final UserService userService;
 	private final String editClassName = "editing";
 
-	public UserListView(UserService userService) {
+	public UserListView(UserService userService, int BCRYPT_STRENGTH) {
 		this.userService = userService;
-		this.userFormView = new UserFormView(userService);
+		this.userFormView = new UserFormView(userService, BCRYPT_STRENGTH);
 
 		allConfig();
 		closeUserForm();
@@ -86,6 +86,7 @@ public class UserListView extends VerticalLayout {
 	private void userFormViewConfig() {
 		userFormView.createButtonEvent(event -> createButtonEvent());
 		userFormView.updateButtonEvent(event -> createButtonEvent());
+		userFormView.deleteButtonEvent(event -> createButtonEvent());
 		userFormView.setWidth("25em");
 	}
 
@@ -148,6 +149,7 @@ public class UserListView extends VerticalLayout {
 		User newUser = new User();
 		newUser.setUsername(filterTextField.getValue());
 		newUser.setEmail(filterTextField.getValue());
+		newUser.setActive(true);
 		userEdit(newUser);
 	}
 

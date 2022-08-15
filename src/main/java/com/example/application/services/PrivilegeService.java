@@ -40,8 +40,13 @@ public class PrivilegeService implements BaseDataService<Privilege> {
     }
 
     @Override
-    public void delete(Privilege privilege) throws DataIntegrityViolationException {
-        this.privilegeRepository.delete(privilege);
+    public boolean delete(Privilege privilege) throws DataIntegrityViolationException {
+        if (this.privilegeRepository.findById(privilege.getId()).isEmpty()) {
+            this.privilegeRepository.delete(privilege);
+            return true;
+        }
+
+        return false;
     }
 
     public boolean findPrivilegeByNameOrCode(Privilege privilege) {

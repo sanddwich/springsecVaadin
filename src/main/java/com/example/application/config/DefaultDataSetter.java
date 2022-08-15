@@ -19,22 +19,7 @@ public class DefaultDataSetter {
     private final UserService userService;
     private final PrivilegeService privilegeService;
     private final AccessRoleService accessRoleService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
-
-//    private User admin = new User(
-//            "admin", "bck-dkiselev@yandex.ru", this.bCryptPasswordEncoder.encode("admin"),
-//            true, Collections.emptyList()
-//    );
-//
-//    private User user = new User(
-//            "user", "sanddwich51@gmail.com", this.bCryptPasswordEncoder.encode("user"),
-//            true, Collections.emptyList()
-//    );
-//
-//    private User test = new User(
-//            "test", "sanddwich1201@gmail.com", this.bCryptPasswordEncoder.encode("test"),
-//            true, Collections.emptyList()
-//    );
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private List<Privilege> privilegeList = Stream.of(
             new Privilege("ADMIN", "ADMIN", "ADMIN ACCESS"),
@@ -56,11 +41,14 @@ public class DefaultDataSetter {
     public DefaultDataSetter(
             UserService userService,
             PrivilegeService privilegeService,
-            AccessRoleService accessRoleService
+            AccessRoleService accessRoleService,
+            int BCRYPT_STRENGTH
     ) {
         this.userService = userService;
         this.privilegeService = privilegeService;
         this.accessRoleService = accessRoleService;
+        this.bCryptPasswordEncoder = new BCryptPasswordEncoder(BCRYPT_STRENGTH);
+
         System.out.println("DefaultDataSetter Begin");
 
         this.createUsers();

@@ -39,8 +39,13 @@ public class UserService implements BaseDataService<User> {
     }
 
     @Override
-    public void delete(User user) throws DataIntegrityViolationException {
-        this.userRepository.delete(user);
+    public boolean delete(User user) throws DataIntegrityViolationException {
+        if (!this.userRepository.findById(user.getId()).isEmpty()) {
+            this.userRepository.delete(user);
+            return true;
+        }
+
+        return false;
     }
 
     public User update(User user) {
