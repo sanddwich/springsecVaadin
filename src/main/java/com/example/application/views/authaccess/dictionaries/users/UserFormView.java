@@ -101,6 +101,8 @@ public class UserFormView extends FormLayout {
 
     public void fieldsLayoutConfig() {
         fieldsLayout.setSizeFull();
+        fieldsLayout.setSpacing(false);
+        fieldsLayout.setPadding(false);
 
         fieldsLayout.add(
                 username,
@@ -142,9 +144,12 @@ public class UserFormView extends FormLayout {
     }
 
     public void buttonLayoutConfig() {
+        buttonsLayout.setClassName("actionButtonLayout");
         buttonsLayout.setSizeFull();
         buttonsLayout.setAlignItems(FlexComponent.Alignment.START);
         buttonsLayout.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.BASELINE);
+        fieldsLayout.setSpacing(false);
+        fieldsLayout.setPadding(false);
 
         buttonsLayout.add(
                 createButton,
