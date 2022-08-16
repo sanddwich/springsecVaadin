@@ -22,7 +22,8 @@ import java.util.List;
 @Route("/users")
 @PageTitle("Users dictionary")
 @PermitAll
-public class UserListView extends VerticalLayout {
+public class UserListView extends HorizontalLayout {
+	private VerticalLayout actionBarWithGrid = new VerticalLayout();
 	private HorizontalLayout actionbar = new HorizontalLayout();
 	private HorizontalLayout content = new HorizontalLayout();
 	private TextField filterTextField = new TextField();
@@ -38,12 +39,6 @@ public class UserListView extends VerticalLayout {
 
 		allConfig();
 		closeUserForm();
-
-		add(
-		  actionbar,
-		  content
-		);
-
 	}
 
 	public void closeUserForm() {
@@ -68,20 +63,26 @@ public class UserListView extends VerticalLayout {
 		actionButtonConfig();
 		filterTextFieldConfig();
 		userFormViewConfig();
-		contentConfig();
+		actionBarWithGridConfig();
 	}
 
-	public void contentConfig() {
-		content.setClassName("content");
-		content.setFlexGrow(2, userGrid);
-		content.setFlexGrow(1, userFormView);
-		content.setSizeFull();
-
-		content.add(
-				userGrid,
-				userFormView
+	public void actionBarWithGridConfig() {
+		actionBarWithGrid.setClassName("actionBarWithGrid");
+		actionBarWithGrid.add(
+		  actionbar,
+		  userGrid
 		);
 	}
+
+//	public void contentConfig() {
+//		content.setClassName("content");
+//		content.setSizeFull();
+//
+//		content.add(
+//				userGrid,
+//				userFormView
+//		);
+//	}
 
 	private void userFormViewConfig() {
 		userFormView.createButtonEvent(event -> createButtonEvent());
@@ -92,7 +93,15 @@ public class UserListView extends VerticalLayout {
 
 	public void thisConfig() {
 		addClassName("dictionaryView");
+		setFlexGrow(2, actionBarWithGrid);
+		setFlexGrow(1, userFormView);
+		setSpacing(false);
+		setPadding(true);
 		setSizeFull();
+		add(
+		  actionBarWithGrid,
+		  userFormView
+		);
 	}
 
 	public void actionbarConfig() {
@@ -130,6 +139,7 @@ public class UserListView extends VerticalLayout {
 			userFormView.setUser(user);
 			userFormView.setVisible(true);
 			addClassName(editClassName);
+			userFormView.setManageRolesButtonEnabled(user.getId() != null);
 		}
 	}
 
@@ -155,6 +165,8 @@ public class UserListView extends VerticalLayout {
 
 	public void createButtonEvent() {
 		filterTextField.setValue("");
+		userFormView.setUser(null);
+		userFormView.setManageRolesButtonEnabled(false);
 		updateUserList();
 	}
 }
