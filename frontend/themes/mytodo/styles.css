@@ -2,5 +2,14 @@
 
 .actionButtonLayout {
     padding-top: 15px;
-    padding-bottom: 5px;
+    padding-bottom: 10px;
+}
+
+.routerLink[highlight] {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.closeButtonContainer {
+
 }

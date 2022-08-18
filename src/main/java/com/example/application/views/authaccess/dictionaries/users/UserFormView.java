@@ -12,7 +12,9 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -39,22 +41,26 @@ import java.util.stream.Stream;
 public class UserFormView extends FormLayout {
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private VerticalLayout fieldsLayout = new VerticalLayout();
-	private TextField username = new TextField();
-	private EmailField email = new EmailField();
-	private PasswordField password = new PasswordField();
-	private ComboBox<Status> status = new ComboBox<>();
+	TextField username = new TextField();
+	EmailField email = new EmailField();
+	PasswordField password = new PasswordField();
+	ComboBox<Status> status = new ComboBox<>();
 	private Checkbox active = new Checkbox();
 	private User user = new User();
-	private HorizontalLayout buttonsLayout = new HorizontalLayout();
+	HorizontalLayout buttonsLayout = new HorizontalLayout();
 	private Button createButton = new Button();
 	private Button updateButton = new Button();
 	private Button deleteButton = new Button();
-	private Button manageRoles = new Button();
+	Button manageRoles = new Button();
 	private final UserService userService;
+	private Icon closeButton;
+	HorizontalLayout closeButtonContainer = new HorizontalLayout();
 
 	Consumer createButtonEvent;
 	Consumer updateButtonEvent;
 	Consumer deleteButtonEvent;
+	Consumer closeFormEvent;
+	Consumer manageRoleEvent;
 
 	Binder<User> userBinder = new BeanValidationBinder<>(User.class);
 
@@ -65,6 +71,7 @@ public class UserFormView extends FormLayout {
 		allConfig();
 
 		add(
+		  closeButtonContainer,
 		  fieldsLayout,
 		  buttonsLayout,
 		  manageRoles
@@ -99,10 +106,34 @@ public class UserFormView extends FormLayout {
 		updateButtonConfig();
 		deleteButtonConfig();
 		manageRolesConfig();
+		closeButtonConfig();
+		closeButtonContainerConfig();
 	}
 
 	public void thisConfig() {
 		addClassName("dictionaryForm");
+	}
+
+	public void closeButtonConfig() {
+		closeButton = new Icon(VaadinIcon.CLOSE_CIRCLE);
+		closeButton.addClassName("closeButtonConfig");
+		closeButton.setColor("hsla(21hsla(214, 50%, 22%, 0.26)");
+		closeButton.addClickListener(this::closeFormHandler);
+	}
+
+	private void closeFormHandler(ClickEvent<Icon> iconClickEvent) {
+		closeFormEvent.accept(iconClickEvent);
+	}
+
+	public void closeButtonContainerConfig() {
+		closeButtonContainer.addClassName("closeButtonContainer");
+		closeButtonContainer.addClassName("pt-m");
+		closeButtonContainer.setWidthFull();
+		closeButtonContainer.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+		closeButtonContainer.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.START);
+		closeButtonContainer.add(
+		  closeButton
+		);
 	}
 
 	public void manageRolesConfig() {
@@ -111,6 +142,11 @@ public class UserFormView extends FormLayout {
 		manageRoles.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 		manageRoles.setSizeFull();
 		manageRoles.setEnabled(false);
+		manageRoles.addClickListener(this::manageRolesHandler);
+	}
+
+	private void manageRolesHandler(ClickEvent<Button> buttonClickEvent) {
+		manageRoleEvent.accept(buttonClickEvent);
 	}
 
 	public void fieldsLayoutConfig() {
@@ -322,5 +358,13 @@ public class UserFormView extends FormLayout {
 
 	public void deleteButtonEvent(Consumer callback) {
 		this.deleteButtonEvent = callback;
+	}
+
+	public void closeFormEvent(Consumer callback) {
+		this.closeFormEvent = callback;
+	}
+
+	public void manageRoleEvent(Consumer callback) {
+		this.manageRoleEvent = callback;
 	}
 }

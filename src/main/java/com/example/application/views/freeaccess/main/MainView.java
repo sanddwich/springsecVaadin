@@ -1,5 +1,6 @@
 package com.example.application.views.freeaccess.main;
 
+import com.example.application.views.layouts.MainLayout;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
@@ -10,7 +11,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 
 @PageTitle("Main")
-@Route(value = "")
+@Route(value = "", layout = MainLayout.class)
 @AnonymousAllowed
 public class MainView extends HorizontalLayout {
 

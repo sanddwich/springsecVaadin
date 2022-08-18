@@ -19,7 +19,13 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication
 @EnableJpaAuditing
 @Theme(value = "mytodo")
-@PWA(name = "My Todo", shortName = "My Todo", offlineResources = {})
+@PWA(
+  name = "Spring Security Vaadin",
+  shortName = "SSV",
+  offlinePath = "offline.html",
+  offlineResources = {
+    "icons/icon.png", "images/offline.png"
+  })
 @NpmPackage(value = "line-awesome", version = "1.3.0")
 public class Application extends SpringBootServletInitializer implements AppShellConfigurator {
 

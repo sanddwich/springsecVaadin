@@ -71,7 +71,7 @@ public class SecurityConfig {
                     "/robots.txt",
                     "/manifest.webmanifest",
                     "/sw.js",
-                    "/ofline.html",
+              "/META-INF/resources/ofline.html",
                     "/icons/**",
                     "/frontend/**",
                     "/styles/**"

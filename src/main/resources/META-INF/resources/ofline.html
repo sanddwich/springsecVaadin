@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>Offline | Vaadin CRM</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: sans-serif;
+            color: #555;
+        }
+
+        .content {
+            width: 80%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .offline-image {
+            width: 30%;
+            margin: 4em 0px;
+        }
+
+        .contentBox {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="content">
+    <div class="contentBox">
+        <img src="./images/offline.png" alt="SSV is offline" class="offline-image"/>
+        <h1>Oh deer, you're offline</h1>
+        <p>Your internet connection is offline. Get back online to continue using SSV.</p>
+    </div>
+</div>
+<script>
+    window.addEventListener('online', () => window.location.reload());
+</script>
+</body>
+</html>
