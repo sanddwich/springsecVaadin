@@ -41,7 +41,7 @@ public class User extends AbstractEntity {
     @NotNull
     private boolean active;
 
-    @ManyToMany(fetch = FetchType.EAGER
+    @ManyToMany(fetch = FetchType.LAZY
 //	  cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}
     )
     @JoinTable(

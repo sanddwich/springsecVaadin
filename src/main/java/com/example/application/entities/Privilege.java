@@ -38,7 +38,7 @@ public class Privilege extends AbstractEntity {
     //    @JsonIgnore
 //    @ManyToMany(mappedBy = "privileges")
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "access_role_privilege_lnk",
             joinColumns = {@JoinColumn(name = "privilege_id")},

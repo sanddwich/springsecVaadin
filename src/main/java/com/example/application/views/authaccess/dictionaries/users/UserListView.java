@@ -6,6 +6,7 @@ import com.example.application.entities.User;
 import com.example.application.services.AccessRoleService;
 import com.example.application.services.UserService;
 import com.example.application.views.components.dialog.AccessRolesDialogView;
+import com.example.application.views.components.notification.ErrorNotification;
 import com.example.application.views.layouts.MainLayout;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
@@ -26,6 +27,7 @@ import com.vaadin.flow.router.Route;
 
 import javax.annotation.security.PermitAll;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -56,6 +58,7 @@ public class UserListView extends HorizontalLayout {
 	private final String editClassName = "editing";
 	private AccessRolesDialogView accessRolesDialogView = new AccessRolesDialogView();
 	private List<AccessRole> userAccessRoles;
+	private TextField filterAccessRoles = new TextField("Поиск ролей");
 
 	public UserListView(
 	  UserService userService,
@@ -88,8 +91,29 @@ public class UserListView extends HorizontalLayout {
 	private void updateAccessRoleList() {
 		if (this.user != null) {
 			List<AccessRole> userRoles = this.user.getAccessRoles();
-			accessRoleGrid.setItems(userRoles);
+			if (filterAccessRoles.getValue().isEmpty()) {
+				accessRoleGrid.setItems(userRoles);
+			} else {
+				accessRoleGrid.setItems(
+				  userRoles.stream()
+					.filter(this::isContainFilterSearchTerm)
+					.collect(Collectors.toList())
+				);
+			}
 		}
+	}
+
+	public boolean isContainFilterSearchTerm(AccessRole inputAccessRole) {
+		boolean result = false;
+		if (
+		  inputAccessRole.getName().toLowerCase(Locale.ROOT).contains(filterAccessRoles.getValue().toLowerCase(Locale.ROOT))
+			|| inputAccessRole.getCode().toLowerCase(Locale.ROOT).contains(filterAccessRoles.getValue().toLowerCase(Locale.ROOT))
+			|| inputAccessRole.getDescription().toLowerCase(Locale.ROOT).contains(filterAccessRoles.getValue().toLowerCase(Locale.ROOT))
+		) {
+			result = true;
+		}
+
+		return result;
 	}
 
 	private List<AccessRole> getDetachedAccessRoles() {
@@ -127,6 +151,17 @@ public class UserListView extends HorizontalLayout {
 		closeButtonConfig();
 		closeButtonContainerConfig();
 		accessRolesDialogViewConfig();
+		filterAccessRolesConfig();
+	}
+
+	public void filterAccessRolesConfig() {
+		filterAccessRoles.setPlaceholder("Введите текст...");
+		filterAccessRoles.addClassName("pt-0");
+		filterAccessRoles.setClearButtonVisible(true);
+		filterAccessRoles.setValueChangeMode(ValueChangeMode.LAZY);
+		filterAccessRoles.addValueChangeListener(event -> {
+			this.updateAccessRoleList();
+		});
 	}
 
 	public void closeButtonContainerConfig() {
@@ -169,6 +204,7 @@ public class UserListView extends HorizontalLayout {
 		accessRolesLayout.add(
 		  closeButtonContainer,
 		  accessRolesLayoutTitle,
+		  filterAccessRoles,
 		  accessRoleGrid,
 		  accessRolesLayoutActionButtons
 		);
@@ -202,7 +238,40 @@ public class UserListView extends HorizontalLayout {
 	}
 
 	public void detachAccessRolesClickHandler(ClickEvent<Button> buttonClickEvent) {
-		System.out.println("detachAccessRolesClick");
+		this.user.setAccessRoles(
+		  this.user.getAccessRoles()
+			.stream()
+			.filter(this::isConsistInDeleteRoles)
+			.collect(Collectors.toList())
+		);
+
+		updateAccessRolesWithDB();
+	}
+
+	public void updateAccessRolesWithDB() {
+		try {
+			if (this.userService.update(this.user) != null) {
+				filterAccessRoles.clear();
+				updateAccessRoleList();
+				ErrorNotification.showNotification("Роли пользователя изменены", false);
+			} else {
+				throw new Exception("Ошибка userService");
+			}
+		} catch (Exception e) {
+			ErrorNotification.showNotification("Ошибка обновления ролей пользователя: " + e.getMessage(), true);
+		}
+	}
+
+	public boolean isConsistInDeleteRoles(AccessRole inputAccessRole) {
+		boolean result = false;
+		for (int iterator = 0; iterator < userAccessRoles.size(); iterator++) {
+			if (userAccessRoles.get(iterator).getCode().equals(inputAccessRole.getCode())) {
+				result = true;
+				break;
+			}
+		}
+
+		return !result;
 	}
 
 	public void addAccessRolesConfig() {
@@ -217,12 +286,15 @@ public class UserListView extends HorizontalLayout {
 	}
 
 	private void addAdditionalAccessRolesToUser(ClickEvent<Button> buttonClickEvent) {
-		List<AccessRole> accessRoleList = accessRolesDialogView.accessRoleGrid.getSelectedItems()
-		  .stream().collect(Collectors.toList());
-		this.user.getAccessRoles().addAll(accessRoleList);
+		this.user.getAccessRoles().addAll(
+		  accessRolesDialogView.accessRoleGrid
+			.getSelectedItems()
+			.stream()
+			.collect(Collectors.toList())
+		);
 
+		updateAccessRolesWithDB();
 		accessRolesDialogView.close();
-		updateAccessRoleList();
 	}
 
 	public void addAccessRoleClickHandler(ClickEvent<Button> buttonClickEvent) {
@@ -308,6 +380,7 @@ public class UserListView extends HorizontalLayout {
 
 		accessRoleGrid.addSelectionListener(event -> {
 			userAccessRoles = event.getAllSelectedItems().stream().collect(Collectors.toList());
+			detachAccessRoles.setEnabled(!userAccessRoles.isEmpty());
 		});
 
 		updateAccessRoleList();
