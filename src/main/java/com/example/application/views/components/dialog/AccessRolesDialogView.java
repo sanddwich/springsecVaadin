@@ -10,6 +10,8 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.ValueChangeMode;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +22,7 @@ public class AccessRolesDialogView extends Dialog {
 	Icon closeDialogIcon = new Icon(VaadinIcon.CLOSE_CIRCLE);
 	public Grid<AccessRole> accessRoleGrid = new Grid<>(AccessRole.class);
 	List<AccessRole> additionalAccessRoles;
+	public TextField filterAccessRoles = new TextField("Поиск ролей");
 
 	public AccessRolesDialogView() {
 		allConfig();
@@ -30,6 +33,7 @@ public class AccessRolesDialogView extends Dialog {
 		closeDialogButtonConfig();
 		closeDialogIconConfig();
 		accessRoleGridConfig();
+		filterAccessRolesConfig();
 		thisConfig();
 	}
 
@@ -49,9 +53,17 @@ public class AccessRolesDialogView extends Dialog {
 		getHeader().add(horizontalLayout);
 		getFooter().add(closeDialogButton);
 		add(
+		  filterAccessRoles,
 		  accessRoleGrid,
 		  actionButtonLayout
 		);
+	}
+
+	public void filterAccessRolesConfig() {
+		filterAccessRoles.setPlaceholder("Введите текст...");
+		filterAccessRoles.addClassName("pt-0");
+		filterAccessRoles.setClearButtonVisible(true);
+		filterAccessRoles.setValueChangeMode(ValueChangeMode.LAZY);
 	}
 
 	public void addAccessRolesButtonConfig() {

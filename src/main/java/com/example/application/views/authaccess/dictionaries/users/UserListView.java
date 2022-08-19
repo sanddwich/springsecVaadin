@@ -8,6 +8,7 @@ import com.example.application.services.UserService;
 import com.example.application.views.components.dialog.AccessRolesDialogView;
 import com.example.application.views.components.notification.ErrorNotification;
 import com.example.application.views.layouts.MainLayout;
+import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -283,6 +284,11 @@ public class UserListView extends HorizontalLayout {
 	private void accessRolesDialogViewConfig() {
 		accessRolesDialogView.accessRoleGrid.addClassName("p-s");
 		accessRolesDialogView.addAccessRolesButton.addClickListener(this::addAdditionalAccessRolesToUser);
+		accessRolesDialogView.filterAccessRoles.addValueChangeListener(this::updateAccessRolesAtDialog);
+	}
+
+	public void updateAccessRolesAtDialog(AbstractField.ComponentValueChangeEvent<TextField, String> textFieldStringComponentValueChangeEvent) {
+		System.out.println("updateAccessRolesAtDialog");
 	}
 
 	private void addAdditionalAccessRolesToUser(ClickEvent<Button> buttonClickEvent) {
