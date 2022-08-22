@@ -288,7 +288,30 @@ public class UserListView extends HorizontalLayout {
 	}
 
 	public void updateAccessRolesAtDialog(AbstractField.ComponentValueChangeEvent<TextField, String> textFieldStringComponentValueChangeEvent) {
-		System.out.println("updateAccessRolesAtDialog");
+		if (!accessRolesDialogView.filterAccessRoles.getValue().isEmpty()) {
+			accessRolesDialogView.accessRoleGrid.setItems(
+			  getDetachedAccessRoles()
+			    .stream()
+			    .filter(this::isDetachedRolesConsist)
+			    .collect(Collectors.toList())
+			);
+		} else {
+			accessRolesDialogView.accessRoleGrid.setItems(getDetachedAccessRoles());
+		}
+
+	}
+
+	public boolean isDetachedRolesConsist(AccessRole inputAccessRole) {
+		boolean result = false;
+		if (
+		  inputAccessRole.getCode().toLowerCase(Locale.ROOT).contains(accessRolesDialogView.filterAccessRoles.getValue().toLowerCase(Locale.ROOT))
+		  || inputAccessRole.getName().toLowerCase(Locale.ROOT).contains(accessRolesDialogView.filterAccessRoles.getValue().toLowerCase(Locale.ROOT))
+		  || inputAccessRole.getDescription().toLowerCase(Locale.ROOT).contains(accessRolesDialogView.filterAccessRoles.getValue().toLowerCase(Locale.ROOT))
+		) {
+			result = true;
+		}
+
+		return result;
 	}
 
 	private void addAdditionalAccessRolesToUser(ClickEvent<Button> buttonClickEvent) {
