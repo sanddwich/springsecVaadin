@@ -4,6 +4,7 @@ import com.example.application.entities.AccessRole;
 import com.example.application.services.AccessRoleService;
 import com.example.application.services.PrivilegeService;
 import com.example.application.views.components.lists.AccessRolesListView;
+import com.example.application.views.components.notification.ErrorNotification;
 import com.example.application.views.layouts.MainLayout;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
@@ -14,6 +15,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
@@ -21,6 +23,7 @@ import com.vaadin.flow.router.Route;
 
 import javax.annotation.security.PermitAll;
 import java.util.Collections;
+import java.util.Locale;
 
 @PermitAll
 @PageTitle("AccessRolesView")
@@ -33,8 +36,9 @@ public class AccessRolesView extends HorizontalLayout {
     TextField filterTextField = new TextField("Поиск ролей");
     HorizontalLayout filterLine = new HorizontalLayout();
     Button addAccessRoleButton = new Button("Добавить");
+    AccessRole editedAccessRole;
 
-    Binder<AccessRole> accessRoleBinder = new Binder<>(AccessRole.class);
+    Binder<AccessRole> accessRoleBinder = new BeanValidationBinder<>(AccessRole.class);
 
     private final AccessRoleService accessRoleService;
     private final PrivilegeService privilegeService;
@@ -74,6 +78,106 @@ public class AccessRolesView extends HorizontalLayout {
         accessRoleFormView.setWidth("25em");
 		accessRoleFormView.setVisible(false);
 		accessRoleFormView.closeIconButton.addClickListener(this::closeIconButtonClickHandler);
+		accessRoleFormView.addAccessRoleButton.addClickListener(this::addAccessRoleButtonClickHandler);
+		accessRoleFormView.updateAccessRoleButton.addClickListener(this::updateAccessRoleButtonClickHandler);
+		accessRoleFormView.deleteAccessRoleButton.addClickListener(this::deleteAccessRoleButtonClickHandler);
+    }
+
+    public void deleteAccessRoleButtonClickHandler(ClickEvent<Button> buttonClickEvent) {
+        try {
+            if (accessRoleService.delete(editedAccessRole)) {
+                accessRolesListUpdate();
+                accessRoleEdit(null);
+                ErrorNotification.showNotification("Роль \"" + editedAccessRole.getName() + "\" удалена!", false);
+            } else {
+                throw new Exception("Ошибка удаления роли!");
+            }
+        } catch(Exception e) {
+            ErrorNotification.showNotification("Ошибка удаления роли: " + e.getMessage(), true);
+        }
+    }
+
+    public void updateAccessRoleButtonClickHandler(ClickEvent<Button> buttonClickEvent) {
+        try {
+            accessRoleBinder.writeBean(editedAccessRole);
+            if (editedAccessRole.getId() == null)
+                throw new Exception("Роль не создана!\n Невозможно обновление");
+
+            if (accessRoleIsExistByNameOrCodeWithOtherID(editedAccessRole))
+                throw new Exception("Существует другая Роль\n с таким Именем или Кодом");
+
+            if (nameOrCodeHasForbiddenChars(editedAccessRole))
+                throw new Exception("В Имени или Коде роли недопустимо\n использование пробелов");
+
+            if (accessRoleService.update(editedAccessRole).getId() != null) {
+                ErrorNotification.showNotification("Роль обновлена!", false);
+                accessRolesListUpdate();
+                accessRoleEdit(null);
+            } else {
+                throw new Exception("Неизвестная ошибка обновления");
+            }
+
+        } catch(Exception e) {
+            ErrorNotification.showNotification("Ошибка обновления роли: " + e.getMessage(), true);
+        }
+    }
+
+    public boolean accessRoleIsExistByNameOrCodeWithOtherID(AccessRole inputAccessRole) {
+        boolean result = false;
+
+        if (
+          accessRoleService.findByName(inputAccessRole.getName()).isEmpty()
+          || accessRoleService.findByCode(inputAccessRole.getCode()).isEmpty()
+        ) return false;
+
+        AccessRole findAccessRoleByName = accessRoleService.findByName(inputAccessRole.getName()).stream().findFirst().get();
+        AccessRole findAccessRoleByCode = accessRoleService.findByCode(inputAccessRole.getCode()).stream().findFirst().get();
+
+        if (
+          (findAccessRoleByName != null && !findAccessRoleByName.getId().equals(inputAccessRole.getId()))
+          || (findAccessRoleByCode != null && !findAccessRoleByCode.getId().equals(inputAccessRole.getId()))
+        ) result = true;
+
+        return result;
+    }
+
+    public void addAccessRoleButtonClickHandler(ClickEvent<Button> buttonClickEvent) {
+        try {
+            accessRoleBinder.writeBean(editedAccessRole);
+            if (accessRoleService.findAccessRoleByNameOrCode(editedAccessRole))
+                throw new Exception("Создаваемая роль уже существует\n с таким Именем или Кодом");
+
+            if (nameOrCodeHasForbiddenChars(editedAccessRole))
+                throw new Exception("В Имени или Коде роли недопустимо\n использование пробелов");
+
+            AccessRole addedAccessRole = new AccessRole(
+              editedAccessRole.getName().toUpperCase(Locale.ROOT),
+              editedAccessRole.getCode().toUpperCase(Locale.ROOT),
+              editedAccessRole.getDescription().toUpperCase(Locale.ROOT),
+              Collections.emptyList()
+            );
+
+            if (accessRoleService.save(addedAccessRole).getId() != null) {
+                ErrorNotification.showNotification("Роль \"" + addedAccessRole.getName() + "\" создана!", false);
+                accessRolesListUpdate();
+                accessRoleEdit(null);
+            } else {
+                throw new Exception("Неизвестная ошибка обновления");
+            }
+
+
+        } catch(Exception e) {
+            ErrorNotification.showNotification("Ошибка создания роли: " + e.getMessage(), true);
+        }
+    }
+
+    public boolean nameOrCodeHasForbiddenChars(AccessRole inputAccessRole) {
+        if (
+          inputAccessRole.getName().replaceAll("\\s+","").length() < inputAccessRole.getName().length()
+          || inputAccessRole.getCode().replaceAll("\\s+","").length() < inputAccessRole.getCode().length()
+        ) return true;
+
+        return false;
     }
 
     public void closeIconButtonClickHandler(ClickEvent<Icon> iconClickEvent) {
@@ -90,7 +194,8 @@ public class AccessRolesView extends HorizontalLayout {
 
     public void accessRoleEdit(AccessRole accessRole) {
         if (accessRole != null) {
-            accessRoleBinder.readBean(accessRole);
+            editedAccessRole = accessRole;
+            accessRoleBinder.readBean(editedAccessRole);
             accessRoleFormView.managePrivilegesButton.setEnabled(accessRole.getId() != null);
             accessRoleFormView.setVisible(true);
         } else {
