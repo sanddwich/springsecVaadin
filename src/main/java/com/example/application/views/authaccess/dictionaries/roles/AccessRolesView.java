@@ -4,6 +4,7 @@ import com.example.application.entities.AccessRole;
 import com.example.application.services.AccessRoleService;
 import com.example.application.services.PrivilegeService;
 import com.example.application.views.components.lists.AccessRolesListView;
+import com.example.application.views.components.lists.PrivilegesListView;
 import com.example.application.views.components.notification.ErrorNotification;
 import com.example.application.views.layouts.MainLayout;
 import com.vaadin.flow.component.AbstractField;
@@ -37,8 +38,8 @@ public class AccessRolesView extends HorizontalLayout {
     HorizontalLayout filterLine = new HorizontalLayout();
     Button addAccessRoleButton = new Button("Добавить");
     AccessRole editedAccessRole;
-
     Binder<AccessRole> accessRoleBinder = new BeanValidationBinder<>(AccessRole.class);
+    PrivilegesListView privilegesListView = PrivilegesListViewCreate();
 
     private final AccessRoleService accessRoleService;
     private final PrivilegeService privilegeService;
@@ -69,9 +70,28 @@ public class AccessRolesView extends HorizontalLayout {
         setSpacing(false);
         setSizeFull();
         add(
+                privilegesListView,
                 leftVerticalLayout,
                 accessRoleFormView
         );
+    }
+
+    public PrivilegesListView PrivilegesListViewCreate() {
+        PrivilegesListView item = new PrivilegesListView();
+        item.setVisible(false);
+        item.closeIconButton.addClickListener(iconClickEvent -> this.privilegesViewOpenClose());
+        item.addPrivilegesButton.addClickListener(this::addPrivilegesButtonClickHandler);
+        item.deletePrivilegesButton.addClickListener(this::deletePrivilegesButtonClickHandler);
+        item.deletePrivilegesButton.setEnabled(false);
+        return item;
+    }
+
+    private void deletePrivilegesButtonClickHandler(ClickEvent<Button> buttonClickEvent) {
+        System.out.println("deletePrivilegesButtonClickHandler");
+    }
+
+    public void addPrivilegesButtonClickHandler(ClickEvent<Button> buttonClickEvent) {
+        System.out.println("addPrivilegesButtonClickHandler");
     }
 
     public void accessRoleFormViewConfig() {
@@ -81,6 +101,23 @@ public class AccessRolesView extends HorizontalLayout {
 		accessRoleFormView.addAccessRoleButton.addClickListener(this::addAccessRoleButtonClickHandler);
 		accessRoleFormView.updateAccessRoleButton.addClickListener(this::updateAccessRoleButtonClickHandler);
 		accessRoleFormView.deleteAccessRoleButton.addClickListener(this::deleteAccessRoleButtonClickHandler);
+		accessRoleFormView.managePrivilegesButton.addClickListener(this::managePrivilegesButtonClickHandler);
+    }
+
+    private void managePrivilegesButtonClickHandler(ClickEvent<Button> buttonClickEvent) {
+        privilegesViewOpenClose();
+    }
+
+    public void privilegesViewOpenClose() {
+        leftVerticalLayout.setVisible(!leftVerticalLayout.isVisible());
+        privilegesListView.setVisible(!privilegesListView.isVisible());
+        accessRoleFormView.addAccessRoleButton.setEnabled(!accessRoleFormView.addAccessRoleButton.isEnabled());
+        accessRoleFormView.updateAccessRoleButton.setEnabled(!accessRoleFormView.updateAccessRoleButton.isEnabled());
+        accessRoleFormView.deleteAccessRoleButton.setEnabled(!accessRoleFormView.deleteAccessRoleButton.isEnabled());
+        accessRoleFormView.name.setEnabled(!accessRoleFormView.name.isEnabled());
+        accessRoleFormView.code.setEnabled(!accessRoleFormView.code.isEnabled());
+        accessRoleFormView.description.setEnabled(!accessRoleFormView.description.isEnabled());
+        accessRoleFormView.closeIconButton.setVisible(!accessRoleFormView.closeIconButton.isVisible());
     }
 
     public void deleteAccessRoleButtonClickHandler(ClickEvent<Button> buttonClickEvent) {

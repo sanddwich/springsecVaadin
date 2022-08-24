@@ -35,7 +35,7 @@ public class AccessRolesListView extends VerticalLayout {
         accessRoleGrid.addColumn(accessRole -> accessRole.getCode()).setHeader("Код роли");
         accessRoleGrid.addColumn(accessRole -> accessRole.getDescription()).setHeader("Описание роли");
         accessRoleGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
-        accessRoleGrid.getColumns().forEach(userColumn -> userColumn.setAutoWidth(true).setSortable(true));
+        accessRoleGrid.getColumns().forEach(accessRoleColumn -> accessRoleColumn.setAutoWidth(true).setSortable(true));
 
     }
 }
