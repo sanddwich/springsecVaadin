@@ -2,6 +2,7 @@ package com.example.application.views.components.lists;
 
 import com.example.application.entities.AccessRole;
 import com.example.application.entities.Privilege;
+import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
@@ -10,6 +11,8 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.ValueChangeMode;
 
 public class PrivilegesListView extends VerticalLayout {
     public Grid<Privilege> privilegeGrid = privilegeGridCreate();
@@ -18,6 +21,7 @@ public class PrivilegesListView extends VerticalLayout {
     public Icon closeIconButton = closeIconButtonCreate();
     HorizontalLayout header = headerCreate();
     HorizontalLayout actionBar = actionBarCreate();
+    public TextField filterPrivileges = new TextField("Поиск привилегий");
 
     public PrivilegesListView() {
         thisConfig();
@@ -26,7 +30,8 @@ public class PrivilegesListView extends VerticalLayout {
     public void thisConfig() {
         addClassName("PrivilegesListView");
         setSizeFull();
-        add(header, privilegeGrid, actionBar);
+        filterPrivilegesConfig();
+        add(header, filterPrivileges, privilegeGrid, actionBar);
     }
 
     public HorizontalLayout actionBarCreate() {
@@ -37,6 +42,14 @@ public class PrivilegesListView extends VerticalLayout {
         horizontalLayout.setDefaultVerticalComponentAlignment(Alignment.CENTER);
         horizontalLayout.add(addPrivilegesButton, deletePrivilegesButton);
         return horizontalLayout;
+    }
+
+    public void filterPrivilegesConfig() {
+        filterPrivileges.addClassName("py-0");
+        filterPrivileges.setLabel("Поиск ролей");
+        filterPrivileges.setPlaceholder("Введите текст...");
+        filterPrivileges.setClearButtonVisible(true);
+        filterPrivileges.setValueChangeMode(ValueChangeMode.LAZY);
     }
 
     public HorizontalLayout headerCreate() {
