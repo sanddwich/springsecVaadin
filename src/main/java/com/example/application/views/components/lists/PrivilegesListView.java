@@ -21,7 +21,7 @@ public class PrivilegesListView extends VerticalLayout {
     public Icon closeIconButton = closeIconButtonCreate();
     HorizontalLayout header = headerCreate();
     HorizontalLayout actionBar = actionBarCreate();
-    public TextField filterPrivileges = new TextField("Поиск привилегий");
+    public TextField filterPrivileges = new TextField("Фильтр");
 
     public PrivilegesListView() {
         thisConfig();
@@ -46,7 +46,7 @@ public class PrivilegesListView extends VerticalLayout {
 
     public void filterPrivilegesConfig() {
         filterPrivileges.addClassName("py-0");
-        filterPrivileges.setLabel("Поиск ролей");
+        filterPrivileges.setLabel("Фильтр");
         filterPrivileges.setPlaceholder("Введите текст...");
         filterPrivileges.setClearButtonVisible(true);
         filterPrivileges.setValueChangeMode(ValueChangeMode.LAZY);

@@ -23,7 +23,7 @@ public class PrivilegesDialogView extends Dialog {
 	Icon closeDialogIcon = new Icon(VaadinIcon.CLOSE_CIRCLE);
 	public Grid<Privilege> privilegesGrid = new Grid<>(Privilege.class);
 	List<Privilege> additionalPrivileges;
-	public TextField filterPrivileges = new TextField("Поиск привилегий");
+	public TextField filterPrivileges = new TextField("Фильтр");
 
 	public PrivilegesDialogView() {
 		allConfig();

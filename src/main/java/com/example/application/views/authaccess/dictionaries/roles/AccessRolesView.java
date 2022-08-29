@@ -40,7 +40,7 @@ public class AccessRolesView extends HorizontalLayout {
 	AccessRoleFormView accessRoleFormView = new AccessRoleFormView();
 	AccessRolesListView accessRolesListView = new AccessRolesListView();
 	VerticalLayout leftVerticalLayout = new VerticalLayout();
-	TextField filterTextField = new TextField("Поиск ролей");
+	TextField filterTextField = new TextField("Фильтр");
 	HorizontalLayout filterLine = new HorizontalLayout();
 	Button addAccessRoleButton = new Button("Добавить");
 	AccessRole editedAccessRole;
@@ -101,10 +101,11 @@ public class AccessRolesView extends HorizontalLayout {
 		);
 
 		try {
-			accessRoleService.update(editedAccessRole);
+			editedAccessRole = accessRoleService.update(editedAccessRole);
 			privilegesDialogView.close();
 
 			updateData();
+			accessRoleEdit(editedAccessRole);
 
 			ErrorNotification.showNotification("Привилегии добавлены к Роли", false);
 		} catch(Exception e) {
@@ -360,6 +361,7 @@ public class AccessRolesView extends HorizontalLayout {
 
 	public void closeIconButtonClickHandler(ClickEvent<Icon> iconClickEvent) {
 		accessRoleFormView.setVisible(false);
+		accessRolesListView.accessRoleGrid.deselectAll();
 	}
 
 	public void accessRolesListViewConfig() {
@@ -404,7 +406,7 @@ public class AccessRolesView extends HorizontalLayout {
 
 	public void filterTextFieldConfig() {
 		filterTextField.addClassName("py-0");
-		filterTextField.setLabel("Поиск ролей");
+		filterTextField.setLabel("Фильтр");
 		filterTextField.setPlaceholder("Введите текст...");
 		filterTextField.setClearButtonVisible(true);
 		filterTextField.setValueChangeMode(ValueChangeMode.LAZY);

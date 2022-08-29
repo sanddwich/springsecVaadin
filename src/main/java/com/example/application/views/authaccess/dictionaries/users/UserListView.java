@@ -59,7 +59,7 @@ public class UserListView extends HorizontalLayout {
 	private final String editClassName = "editing";
 	private AccessRolesDialogView accessRolesDialogView = new AccessRolesDialogView();
 	private List<AccessRole> userAccessRoles;
-	private TextField filterAccessRoles = new TextField("Поиск ролей");
+	private TextField filterAccessRoles = new TextField("Фильтр");
 
 	public UserListView(
 	  UserService userService,
@@ -428,7 +428,7 @@ public class UserListView extends HorizontalLayout {
 	}
 
 	public void filterTextFieldConfig() {
-		filterTextField.setLabel("Поиск пользователей");
+		filterTextField.setLabel("Фильтр");
 		filterTextField.setPlaceholder("Введите текст...");
 		filterTextField.setClearButtonVisible(true);
 		filterTextField.setValueChangeMode(ValueChangeMode.LAZY);

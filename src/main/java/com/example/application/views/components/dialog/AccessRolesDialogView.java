@@ -22,7 +22,7 @@ public class AccessRolesDialogView extends Dialog {
 	Icon closeDialogIcon = new Icon(VaadinIcon.CLOSE_CIRCLE);
 	public Grid<AccessRole> accessRoleGrid = new Grid<>(AccessRole.class);
 	List<AccessRole> additionalAccessRoles;
-	public TextField filterAccessRoles = new TextField("Поиск ролей");
+	public TextField filterAccessRoles = new TextField("Фильтр");
 
 	public AccessRolesDialogView() {
 		allConfig();
