@@ -19,7 +19,7 @@ public class PrivilegesListView extends VerticalLayout {
     public Button addPrivilegesButton = addPrivilegesButtonCreate();
     public Button deletePrivilegesButton = deletePrivilegesButtonCreate();
     public Icon closeIconButton = closeIconButtonCreate();
-    HorizontalLayout header = headerCreate();
+    public HorizontalLayout header = headerCreate();
     HorizontalLayout actionBar = actionBarCreate();
     public TextField filterPrivileges = new TextField("Фильтр");
 
