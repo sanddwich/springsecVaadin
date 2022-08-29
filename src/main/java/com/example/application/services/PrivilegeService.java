@@ -41,7 +41,7 @@ public class PrivilegeService implements BaseDataService<Privilege> {
 
     @Override
     public boolean delete(Privilege privilege) throws DataIntegrityViolationException {
-        if (this.privilegeRepository.findById(privilege.getId()).isEmpty()) {
+        if (!this.privilegeRepository.findById(privilege.getId()).isEmpty()) {
             this.privilegeRepository.delete(privilege);
             return true;
         }
@@ -63,6 +63,11 @@ public class PrivilegeService implements BaseDataService<Privilege> {
                 .filter(this::isPrivilegeByNameNotExist)
                 .peek(privilegeRepository::save)
                 .collect(Collectors.toList());
+    }
+
+    public Privilege update(Privilege privilege) {
+        privilegeRepository.save(privilege);
+        return this.privilegeRepository.findByCode(privilege.getCode()).stream().findFirst().get();
     }
 
     public boolean isPrivilegeByNameNotExist(Privilege privilege) {
