@@ -2,6 +2,7 @@ package com.example.application.restControllers;
 
 import com.example.application.entities.User;
 import com.example.application.restControllers.inputDTO.AuthDataInput;
+import com.example.application.restControllers.inputDTO.TokenDataInput;
 import com.example.application.security.jwt.JwtTokenProvider;
 import com.example.application.services.UserService;
 import org.springframework.http.ResponseEntity;
@@ -56,6 +57,19 @@ public class RestAPIAuthController {
             return ResponseEntity.ok(response);
         } catch(AuthenticationException e) {
             throw new BadCredentialsException("Invalid username/password");
+        }
+    }
+
+    @PostMapping("/check_token")
+    public ResponseEntity checkToken(@RequestBody TokenDataInput tokenDataInput) {
+        Map<Object, Object> response = new HashMap<>();
+
+        try {
+            response.put("tokenIsValid", this.jwtTokenProvider.validateToken(tokenDataInput.getToken()));
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("tokenIsValid", false);
+            return ResponseEntity.ok(response);
         }
     }
 }

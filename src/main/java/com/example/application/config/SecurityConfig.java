@@ -114,6 +114,7 @@ public class SecurityConfig {
                     .and()
                     .authorizeRequests()
                     .antMatchers("/api/auth/login").permitAll()
+                    .antMatchers("/api/auth/check_token").permitAll()
                     .anyRequest().authenticated()
                     .and()
                     .apply(new JwtConfigurer(jwtTokenProvider));
