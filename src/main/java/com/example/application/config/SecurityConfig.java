@@ -19,6 +19,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.application.views.freeaccess.auth.LoginView;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -104,12 +106,15 @@ public class SecurityConfig {
     @Configuration
     @Order(1)
     public class JWTSecurityConfig extends WebSecurityConfigurerAdapter {
+        @Value("${params.FRONTEND_URL}")
+        public String FRONTEND_URL;
+
         @Override   //REST
         protected void configure(HttpSecurity http) throws Exception {
             http
+                    .cors().and().csrf().disable()
                     .antMatcher("/api/**")
                     .httpBasic().disable()
-                    .csrf().disable()
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and()
                     .authorizeRequests()

@@ -5,20 +5,22 @@ import com.example.application.restControllers.inputDTO.AuthDataInput;
 import com.example.application.restControllers.inputDTO.TokenDataInput;
 import com.example.application.security.jwt.JwtTokenProvider;
 import com.example.application.services.UserService;
+import org.openxmlformats.schemas.drawingml.x2006.diagram.CTHierBranchStyle;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@CrossOrigin(exposedHeaders = "Access-Control-Allow-Origin", origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/auth")
 public class RestAPIAuthController {
@@ -38,6 +40,8 @@ public class RestAPIAuthController {
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody AuthDataInput authDataInput) {
+        Map<Object, Object> response = new HashMap<>();
+
         try {
             this.authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authDataInput.getUsername(), authDataInput.getPass())
@@ -50,13 +54,15 @@ public class RestAPIAuthController {
 
             String token = this.jwtTokenProvider.createToken(user);
 
-            Map<Object, Object> response = new HashMap<>();
             response.put("username", authDataInput.getUsername());
             response.put("token", token);
 
             return ResponseEntity.ok(response);
+
         } catch(AuthenticationException e) {
-            throw new BadCredentialsException("Invalid username/password");
+            response.put("authError:", "Invalid username/password");
+            return ResponseEntity.ok(response);
+//            throw new BadCredentialsException("Invalid username/password");
         }
     }
 
@@ -72,4 +78,12 @@ public class RestAPIAuthController {
             return ResponseEntity.ok(response);
         }
     }
+
+    private HttpHeaders getCORSHeader() {
+        HttpHeaders corsHeader = new HttpHeaders();
+        corsHeader.add("Access-Control-Allow-Origin", "*");
+
+        return corsHeader;
+    }
+
 }
