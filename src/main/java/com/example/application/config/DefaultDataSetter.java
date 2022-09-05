@@ -58,7 +58,7 @@ public class DefaultDataSetter {
 
     public void createUsers() {
         User admin = new User(
-                "admin", "bck-dkiselev@yandex.ru", this.bCryptPasswordEncoder.encode("Gjlvfcnthmt1!"),
+                "admin", "bck-dkiselev@yandex.ru", this.bCryptPasswordEncoder.encode("admin"),
                 true, Collections.emptyList()
         );
 
