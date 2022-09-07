@@ -70,6 +70,8 @@ public class RestAPIAuthController {
     public ResponseEntity checkToken(@RequestBody TokenDataInput tokenDataInput) {
         Map<Object, Object> response = new HashMap<>();
 
+//        System.out.println(tokenDataInput.getToken());
+
         try {
             response.put("tokenIsValid", this.jwtTokenProvider.validateToken(tokenDataInput.getToken()));
             return ResponseEntity.ok(response);
