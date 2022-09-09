@@ -5,11 +5,9 @@ import com.example.application.services.PrivilegeService;
 import com.example.application.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(exposedHeaders = "Access-Control-Allow-Origin", origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/developer")
 public class RestAPIController {

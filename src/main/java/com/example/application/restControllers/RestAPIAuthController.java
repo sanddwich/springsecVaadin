@@ -44,7 +44,7 @@ public class RestAPIAuthController {
 
         try {
             this.authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authDataInput.getUsername(), authDataInput.getPass())
+                    new UsernamePasswordAuthenticationToken(authDataInput.getUsername(), authDataInput.getPassword())
             );
 
             User user = this.userService.findByUsername(authDataInput.getUsername()).stream().findFirst().get();
